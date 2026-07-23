@@ -18,21 +18,27 @@ const encryptResponseMiddleware = require('./middleware/encryptResponseMiddlewar
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(encryptResponseMiddleware);
 
-// Serve Static Files (Thư mục upload ảnh)
+// Serve Static Files (Đặt TRƯỚC encryptResponseMiddleware để phục vụ trực tiếp file ảnh binary tĩnh)
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Mã hóa JSON response cho các API endpoints
+app.use(encryptResponseMiddleware);
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const truSoHanhChinhRoutes = require('./routes/truSoHanhChinhRoutes');
 const thonRoutes = require('./routes/thonRoutes');
 const userRoutes = require('./routes/userRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tru-so-hanh-chinh', truSoHanhChinhRoutes);
 app.use('/api/thon', thonRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // Root Route
 app.get('/', (req, res) => {
@@ -51,7 +57,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`=================================`);

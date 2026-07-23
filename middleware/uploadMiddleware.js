@@ -22,20 +22,20 @@ const storage = multer.diskStorage({
 
 // File Filter - Only images
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
+  const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const mimetype = allowedTypes.test(file.mimetype) || file.mimetype.startsWith('image/');
 
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb(new Error('Chỉ cho phép tải lên file hình ảnh (jpeg, jpg, png, gif, webp)!'));
+    cb(new Error('Chỉ cho phép tải lên file hình ảnh (jpeg, jpg, png, gif, webp, svg)!'));
   }
 };
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit cho ảnh lớn
   fileFilter: fileFilter
 });
 
