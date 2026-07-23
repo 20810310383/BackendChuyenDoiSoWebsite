@@ -40,6 +40,10 @@ const phanQuyenSchema = new mongoose.Schema(
       },
       phanQuyen: {
         xem: { type: Boolean, default: true }
+      },
+      caiDatHeThong: {
+        xem: { type: Boolean, default: true },
+        sua: { type: Boolean, default: true }
       }
     }
   },
