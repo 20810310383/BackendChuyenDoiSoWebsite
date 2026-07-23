@@ -33,12 +33,14 @@ const truSoHanhChinhRoutes = require('./routes/truSoHanhChinhRoutes');
 const thonRoutes = require('./routes/thonRoutes');
 const userRoutes = require('./routes/userRoutes');
 const bannerRoutes = require('./routes/bannerRoutes');
+const phanQuyenRoutes = require('./routes/phanQuyenRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tru-so-hanh-chinh', truSoHanhChinhRoutes);
 app.use('/api/thon', thonRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/banners', bannerRoutes);
+app.use('/api/phan-quyen', phanQuyenRoutes);
 
 // Root Route
 app.get('/', (req, res) => {
