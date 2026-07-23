@@ -8,7 +8,7 @@ exports.getAllThon = async (req, res) => {
     const { all } = req.query;
     const filter = all === 'true' ? {} : { trangThai: true };
 
-    const listThon = await Thon.find(filter).sort({ thuTu: 1, createdAt: -1 });
+    const listThon = await Thon.find(filter).sort({ createdAt: 1 });
 
     res.status(200).json({
       success: true,
@@ -58,6 +58,7 @@ exports.createThon = async (req, res) => {
   try {
     const {
       tenThon,
+      hinhAnh,
       thonCu,
       thonGoc,
       nhaVanHoa,
@@ -71,7 +72,6 @@ exports.createThon = async (req, res) => {
       linkChiDuong,
       toaDo,
       danhSachCanBo,
-      thuTu,
       trangThai
     } = req.body;
 
@@ -82,23 +82,28 @@ exports.createThon = async (req, res) => {
       });
     }
 
+    let hinhAnhPath = hinhAnh || '';
+    if (req.file) {
+      hinhAnhPath = `/uploads/images/${req.file.filename}`;
+    }
+
     const thonMoi = await Thon.create({
       tenThon,
+      hinhAnh: hinhAnhPath,
       thonCu: thonCu || '',
       thonGoc: thonGoc || [],
       nhaVanHoa: nhaVanHoa || '',
       diaChiNhaVanHoa: diaChiNhaVanHoa || '',
-      soHoDan: soHoDan || 0,
-      danSo: danSo || 0,
+      soHoDan: soHoDan ? Number(soHoDan) : 0,
+      danSo: danSo ? Number(danSo) : 0,
       tyLeHoToanXa: tyLeHoToanXa || '',
       khoangCachTrungTam: khoangCachTrungTam || '',
       gioiThieu: gioiThieu || '',
       linkGoogleMaps: linkGoogleMaps || '',
       linkChiDuong: linkChiDuong || '',
-      toaDo: toaDo || { lat: 0, lng: 0 },
-      danhSachCanBo: danhSachCanBo || [],
-      thuTu: thuTu || 0,
-      trangThai: trangThai !== undefined ? trangThai : true
+      toaDo: toaDo ? (typeof toaDo === 'string' ? JSON.parse(toaDo) : toaDo) : { lat: 0, lng: 0 },
+      danhSachCanBo: danhSachCanBo ? (typeof danhSachCanBo === 'string' ? JSON.parse(danhSachCanBo) : danhSachCanBo) : [],
+      trangThai: trangThai !== undefined ? (trangThai === 'true' || trangThai === true) : true
     });
 
     res.status(201).json({
@@ -130,7 +135,17 @@ exports.updateThon = async (req, res) => {
       });
     }
 
-    thon = await Thon.findByIdAndUpdate(req.params.id, req.body, {
+    const updateFields = { ...req.body };
+
+    if (updateFields.trangThai !== undefined) {
+      updateFields.trangThai = updateFields.trangThai === 'true' || updateFields.trangThai === true;
+    }
+
+    if (req.file) {
+      updateFields.hinhAnh = `/uploads/images/${req.file.filename}`;
+    }
+
+    thon = await Thon.findByIdAndUpdate(req.params.id, updateFields, {
       new: true,
       runValidators: true
     });

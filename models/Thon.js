@@ -45,21 +45,25 @@ const ThonSchema = new mongoose.Schema(
       required: [true, 'Vui lòng nhập tên thôn'],
       trim: true
     },
+    hinhAnh: {
+      type: String,
+      default: '' // Hình ảnh đại diện Nhà văn hóa / Thôn
+    },
     thonCu: {
       type: String,
       trim: true,
-      default: '' // Ví dụ: "1 Tâng, 2 Tâng"
+      default: ''
     },
     thonGoc: [
       {
         type: String,
         trim: true
       }
-    ], // Ví dụ: ["1 Tâng", "2 Tâng"]
+    ],
     nhaVanHoa: {
       type: String,
       trim: true,
-      default: '' // Ví dụ: "Nhà văn hoá thôn 02 Tâng (cũ)"
+      default: ''
     },
     diaChiNhaVanHoa: {
       type: String,
@@ -70,21 +74,21 @@ const ThonSchema = new mongoose.Schema(
     // Các thông số chỉ số thống kê của Thôn
     soHoDan: {
       type: Number,
-      default: 0 // Ví dụ: 573
+      default: 0
     },
     danSo: {
       type: Number,
-      default: 0 // Ví dụ: 2060
+      default: 0
     },
     tyLeHoToanXa: {
       type: String,
       trim: true,
-      default: '' // Ví dụ: "8,9%"
+      default: ''
     },
     khoangCachTrungTam: {
       type: String,
       trim: true,
-      default: '' // Ví dụ: "5,1 km"
+      default: ''
     },
 
     // Mô tả giới thiệu

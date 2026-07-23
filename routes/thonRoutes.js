@@ -20,8 +20,8 @@ router.get('/:id', getThonById);
 router.post('/seed', seedSampleData);
 
 // Protected Thôn routes
-router.post('/', protect, authorize('admin', 'nhanvien'), createThon);
-router.put('/:id', protect, authorize('admin', 'nhanvien'), updateThon);
+router.post('/', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), createThon);
+router.put('/:id', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), updateThon);
 router.delete('/:id', protect, authorize('admin'), deleteThon);
 
 // Protected Cán bộ Thôn routes
