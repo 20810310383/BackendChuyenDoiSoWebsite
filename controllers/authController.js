@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const NguoiDung = require('../models/NguoiDung');
 
-// Hàm tạo JWT Token
+// Hàm tạo JWT Token với thời hạn 24 giờ
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '30d'
+    expiresIn: process.env.JWT_EXPIRE || '24h'
   });
 };
 
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
 
     if (existingUser) {
       let duplicateField = 'thông tin';
-      if (existingUser.username === username.toLowerCase()) duplicateField = 'Username';
+      if (existingUser.username === username.toLowerCase()) duplicateField = 'Tên đăng nhập';
       else if (existingUser.email === email.toLowerCase()) duplicateField = 'Email';
       else if (existingUser.sdt === sdt.trim()) duplicateField = 'Số điện thoại';
 
@@ -61,16 +61,13 @@ exports.register = async (req, res) => {
       avatar: avatarPath
     });
 
-    const token = generateToken(user._id);
-
     // Filter out password from response
     const userObj = user.toObject();
     delete userObj.matKhau;
 
     res.status(201).json({
       success: true,
-      message: 'Đăng ký tài khoản thành công!',
-      token,
+      message: 'Đăng ký tài khoản thành công! Tài khoản của bạn đang chờ Admin phê duyệt trước khi đăng nhập.',
       data: userObj
     });
   } catch (error) {
@@ -96,7 +93,7 @@ exports.login = async (req, res) => {
     if (!account || !matKhau) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập Email / SDT / Username và Mật khẩu!'
+        message: 'Vui lòng nhập Email / SDT / Tên đăng nhập và Mật khẩu!'
       });
     }
 
@@ -114,14 +111,14 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Tài khoản (Email/SDT/Username) không tồn tại!'
+        message: 'Tài khoản (Email/SDT/Tên đăng nhập) không tồn tại!'
       });
     }
 
     if (!user.trangThai) {
       return res.status(403).json({
         success: false,
-        message: 'Tài khoản của bạn đã bị vô hiệu hóa!'
+        message: 'Tài khoản của bạn chưa được Admin phê duyệt hoặc đã bị khóa!'
       });
     }
 
@@ -134,7 +131,9 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Tạo Token 24h và lưu token mới nhất vào MongoDB
     const token = generateToken(user._id);
+    await NguoiDung.updateOne({ _id: user._id }, { $set: { currentToken: token } });
 
     const userObj = user.toObject();
     delete userObj.matKhau;
@@ -200,16 +199,19 @@ exports.updateProfile = async (req, res) => {
 
     await user.save();
 
+    const userObj = user.toObject();
+    delete userObj.matKhau;
+
     res.status(200).json({
       success: true,
       message: 'Cập nhật thông tin thành công!',
-      data: user
+      data: userObj
     });
   } catch (error) {
     console.error('[Update Profile Error]:', error);
     res.status(500).json({
       success: false,
-      message: 'Lỗi khi cập nhật thông tin cá nhân!',
+      message: 'Lỗi hệ thống khi cập nhật thông tin!',
       error: error.message
     });
   }
@@ -225,14 +227,7 @@ exports.changePassword = async (req, res) => {
     if (!matKhauCu || !matKhauMoi) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng cung cấp mật khẩu cũ và mật khẩu mới!'
-      });
-    }
-
-    if (matKhauMoi.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: 'Mật khẩu mới phải có tối thiểu 6 ký tự!'
+        message: 'Vui lòng nhập mật khẩu cũ và mật khẩu mới!'
       });
     }
 
@@ -242,7 +237,7 @@ exports.changePassword = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({
         success: false,
-        message: 'Mật khẩu cũ không chính xác!'
+        message: 'Mật khẩu hiện tại không đúng!'
       });
     }
 
@@ -251,7 +246,7 @@ exports.changePassword = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Đổi mật khẩu thành công!'
+      message: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'
     });
   } catch (error) {
     console.error('[Change Password Error]:', error);

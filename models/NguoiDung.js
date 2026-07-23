@@ -40,7 +40,7 @@ const NguoiDungSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'nhanvien', 'khachhang'],
+      enum: ['admin', 'nhanvien', 'thongke'],
       default: 'nhanvien'
     },
     diaChi: {
@@ -53,7 +53,11 @@ const NguoiDungSchema = new mongoose.Schema(
     },
     trangThai: {
       type: Boolean,
-      default: true
+      default: false // Mặc định false (Chờ Admin phê duyệt mới được đăng nhập)
+    },
+    currentToken: {
+      type: String,
+      default: '' // Lưu lại token mới nhất khi đăng nhập để so sánh phiên
     }
   },
   {

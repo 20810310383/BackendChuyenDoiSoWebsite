@@ -191,19 +191,17 @@ exports.seedSampleData = async (req, res) => {
 
     const sampleData = [
       {
-        tenTruSo: 'Trụ sở Đảng ủy, UBND, Uỷ ban MTTQ xã Thanh Liêm',
-        moTa: 'Trung tâm hành chính - chính trị của xã. Tiếp nhận và giải quyết thủ tục hành chính cho người dân.',
-        linkGoogleMaps: 'https://maps.google.com/?q=Trụ+sở+UBND+xã+Thanh+Liêm',
-        linkChiDuong: 'https://www.google.com/maps/dir//Trụ+sở+UBND+xã+Thanh+Liêm',
-        icon: '/uploads/images/icon-ubnd.png',
-        diaChi: 'Xã Thanh Liêm, Huyện Thanh Liêm, Tỉnh Hà Nam',
+        tenTruSo: 'Trụ sở Đảng ủy, UBND, Uỷ ban MTTQ Xã',
+        moTa: 'Trung tâm hành chính - chính trị cấp xã',
+        diaChi: 'Trụ sở Hành chính Xã',
         soDienThoai: '02263888999',
         thuTu: 1,
         trangThai: true
       },
       {
-        tenTruSo: 'Trụ sở Công an xã Thanh Liêm',
-        moTa: 'Đảm bảo an ninh trật tự, tiếp nhận trình báo, thủ tục cư trú, căn cước.',
+        tenTruSo: 'Trụ sở Công an Xã',
+        moTa: 'Trụ sở làm việc của Công an xã',
+        diaChi: 'Trụ sở Công an Xã',
         linkGoogleMaps: 'https://maps.google.com/?q=Trụ+sở+Công+an+xã+Thanh+Liêm',
         linkChiDuong: 'https://www.google.com/maps/dir//Trụ+sở+Công+an+xã+Thanh+Liêm',
         icon: '/uploads/images/icon-congan.png',

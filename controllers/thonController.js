@@ -328,7 +328,7 @@ exports.seedSampleData = async (req, res) => {
         thonCu: '1 Tâng, 2 Tâng',
         thonGoc: ['1 Tâng', '2 Tâng'],
         nhaVanHoa: 'Nhà văn hoá thôn 02 Tâng (cũ)',
-        diaChiNhaVanHoa: 'Nhà văn hóa thôn 02 Tâng (cũ), Xã Thanh Liêm',
+        diaChiNhaVanHoa: 'Nhà văn hóa thôn 02 Tâng (cũ)',
         soHoDan: 573,
         danSo: 2060,
         tyLeHoToanXa: '8,9%',

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const NguoiDung = require('../models/NguoiDung');
 
-// Protect routes - Xác thực JWT Token
+// Protect routes - Xác thực JWT Token & Kiểm tra phiên token duy nhất (Single Device / Single Token)
 exports.protect = async (req, res, next) => {
   let token;
 
@@ -33,7 +33,16 @@ exports.protect = async (req, res, next) => {
     if (!req.user.trangThai) {
       return res.status(403).json({
         success: false,
-        message: 'Tài khoản của bạn đã bị khóa!'
+        message: 'Tài khoản của bạn đã bị khóa hoặc chưa được Admin phê duyệt!'
+      });
+    }
+
+    // Kiểm tra so sánh token hiện tại trong Database: Nếu khác token gửi lên -> Tài khoản đã đăng nhập nơi khác hoặc hết hạn phiên
+    if (req.user.currentToken && req.user.currentToken !== token) {
+      return res.status(401).json({
+        success: false,
+        code: 'TOKEN_MISMATCH',
+        message: 'Tài khoản của bạn đã được đăng nhập ở thiết bị/trình duyệt khác hoặc phiên 24h đã hết hạn. Vui lòng đăng nhập lại!'
       });
     }
 
@@ -41,7 +50,7 @@ exports.protect = async (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Token không hợp lệ hoặc đã hết hạn!'
+      message: 'Token không hợp lệ hoặc đã hết hạn (24 giờ)! Vui lòng đăng nhập lại.'
     });
   }
 };

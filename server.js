@@ -27,10 +27,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 const authRoutes = require('./routes/authRoutes');
 const truSoHanhChinhRoutes = require('./routes/truSoHanhChinhRoutes');
 const thonRoutes = require('./routes/thonRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tru-so-hanh-chinh', truSoHanhChinhRoutes);
 app.use('/api/thon', thonRoutes);
+app.use('/api/users', userRoutes);
 
 // Root Route
 app.get('/', (req, res) => {
@@ -49,7 +51,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`=================================`);
