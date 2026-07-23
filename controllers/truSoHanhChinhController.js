@@ -8,7 +8,7 @@ exports.getAllTruSo = async (req, res) => {
     const { all } = req.query;
     const filter = all === 'true' ? {} : { trangThai: true };
 
-    const listTruSo = await TruSoHanhChinh.find(filter).sort({ thuTu: 1, createdAt: -1 });
+    const listTruSo = await TruSoHanhChinh.find(filter).sort({ createdAt: 1 });
 
     res.status(200).json({
       success: true,
@@ -64,8 +64,8 @@ exports.createTruSo = async (req, res) => {
       diaChi,
       soDienThoai,
       toaDo,
-      thuTu,
       trangThai,
+      hinhAnh,
       icon
     } = req.body;
 
@@ -76,23 +76,22 @@ exports.createTruSo = async (req, res) => {
       });
     }
 
-    let iconPath = icon || '';
-
+    let hinhAnhPath = hinhAnh || '';
     if (req.file) {
-      iconPath = `/uploads/images/${req.file.filename}`;
+      hinhAnhPath = `/uploads/images/${req.file.filename}`;
     }
 
     const truSoMoi = await TruSoHanhChinh.create({
       tenTruSo,
       moTa: moTa || '',
+      hinhAnh: hinhAnhPath,
       linkGoogleMaps: linkGoogleMaps || '',
       linkChiDuong: linkChiDuong || '',
       diaChi: diaChi || '',
       soDienThoai: soDienThoai || '',
       toaDo: toaDo ? (typeof toaDo === 'string' ? JSON.parse(toaDo) : toaDo) : { lat: 0, lng: 0 },
-      thuTu: thuTu ? Number(thuTu) : 0,
-      trangThai: trangThai !== undefined ? trangThai : true,
-      icon: iconPath
+      trangThai: trangThai !== undefined ? (trangThai === 'true' || trangThai === true) : true,
+      icon: icon || ''
     });
 
     res.status(201).json({
@@ -126,12 +125,16 @@ exports.updateTruSo = async (req, res) => {
 
     const updateFields = { ...req.body };
 
+    if (updateFields.trangThai !== undefined) {
+      updateFields.trangThai = updateFields.trangThai === 'true' || updateFields.trangThai === true;
+    }
+
     if (updateFields.toaDo && typeof updateFields.toaDo === 'string') {
       updateFields.toaDo = JSON.parse(updateFields.toaDo);
     }
 
     if (req.file) {
-      updateFields.icon = `/uploads/images/${req.file.filename}`;
+      updateFields.hinhAnh = `/uploads/images/${req.file.filename}`;
     }
 
     truSo = await TruSoHanhChinh.findByIdAndUpdate(req.params.id, updateFields, {
@@ -177,53 +180,6 @@ exports.deleteTruSo = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Lỗi khi xóa Trụ sở hành chính!',
-      error: error.message
-    });
-  }
-};
-
-// @desc    Khởi tạo dữ liệu mẫu từ hình ảnh giao diện
-// @route   POST /api/tru-so-hanh-chinh/seed
-// @access  Public / Private
-exports.seedSampleData = async (req, res) => {
-  try {
-    await TruSoHanhChinh.deleteMany({});
-
-    const sampleData = [
-      {
-        tenTruSo: 'Trụ sở Đảng ủy, UBND, Uỷ ban MTTQ Xã',
-        moTa: 'Trung tâm hành chính - chính trị cấp xã',
-        diaChi: 'Trụ sở Hành chính Xã',
-        soDienThoai: '02263888999',
-        thuTu: 1,
-        trangThai: true
-      },
-      {
-        tenTruSo: 'Trụ sở Công an Xã',
-        moTa: 'Trụ sở làm việc của Công an xã',
-        diaChi: 'Trụ sở Công an Xã',
-        linkGoogleMaps: 'https://maps.google.com/?q=Trụ+sở+Công+an+xã+Thanh+Liêm',
-        linkChiDuong: 'https://www.google.com/maps/dir//Trụ+sở+Công+an+xã+Thanh+Liêm',
-        icon: '/uploads/images/icon-congan.png',
-        diaChi: 'Xã Thanh Liêm, Huyện Thanh Liêm, Tỉnh Hà Nam',
-        soDienThoai: '02263777888',
-        thuTu: 2,
-        trangThai: true
-      }
-    ];
-
-    const insertedData = await TruSoHanhChinh.insertMany(sampleData);
-
-    res.status(201).json({
-      success: true,
-      message: 'Khởi tạo dữ liệu mẫu Trụ sở hành chính thành công!',
-      count: insertedData.length,
-      data: insertedData
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi khi khởi tạo dữ liệu mẫu!',
       error: error.message
     });
   }

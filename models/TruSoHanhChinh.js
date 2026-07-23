@@ -12,29 +12,33 @@ const TruSoHanhChinhSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    hinhAnh: {
+      type: String,
+      default: '' // Đường dẫn hình ảnh trụ sở
+    },
     icon: {
       type: String,
-      default: '' // Đường dẫn logo / icon hiển thị
+      default: ''
     },
     linkGoogleMaps: {
       type: String,
       trim: true,
-      default: '' // Đường dẫn link bấm "Mở Google Maps"
+      default: ''
     },
     linkChiDuong: {
       type: String,
       trim: true,
-      default: '' // Đường dẫn link bấm "Chỉ đường"
+      default: ''
     },
     diaChi: {
       type: String,
       trim: true,
-      default: '' // Địa chỉ cụ thể trụ sở
+      default: ''
     },
     soDienThoai: {
       type: String,
       trim: true,
-      default: '' // Số điện thoại liên hệ khẩn cấp / hành chính
+      default: ''
     },
     toaDo: {
       lat: { type: Number, default: 0 },
@@ -42,11 +46,11 @@ const TruSoHanhChinhSchema = new mongoose.Schema(
     },
     thuTu: {
       type: Number,
-      default: 0 // Thứ tự hiển thị trên giao diện
+      default: 0
     },
     trangThai: {
       type: Boolean,
-      default: true // Trạng thái hiển thị (true: Bật, false: Ẩn)
+      default: true
     }
   },
   {

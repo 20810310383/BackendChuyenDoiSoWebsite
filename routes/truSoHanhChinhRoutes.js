@@ -5,8 +5,7 @@ const {
   getTruSoById,
   createTruSo,
   updateTruSo,
-  deleteTruSo,
-  seedSampleData
+  deleteTruSo
 } = require('../controllers/truSoHanhChinhController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
@@ -14,11 +13,10 @@ const upload = require('../middleware/uploadMiddleware');
 // Public routes
 router.get('/', getAllTruSo);
 router.get('/:id', getTruSoById);
-router.post('/seed', seedSampleData);
 
 // Protected routes (Cần Token & Quyền Admin / NhanVien)
-router.post('/', protect, authorize('admin', 'nhanvien'), upload.single('icon'), createTruSo);
-router.put('/:id', protect, authorize('admin', 'nhanvien'), upload.single('icon'), updateTruSo);
+router.post('/', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), createTruSo);
+router.put('/:id', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), updateTruSo);
 router.delete('/:id', protect, authorize('admin'), deleteTruSo);
 
 module.exports = router;
