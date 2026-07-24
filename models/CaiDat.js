@@ -34,6 +34,10 @@ const caiDatSchema = new mongoose.Schema(
       type: String,
       default: 'Cập nhật những thông tin, chỉ đạo và hoạt động chuyển đổi số mới nhất của Đoàn xã Tân Thanh'
     },
+    dienTichTuNhien: {
+      type: String,
+      default: '23,27 km²'
+    },
     logoUrl: {
       type: String,
       default: '/images/logo.png'

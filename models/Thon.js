@@ -80,6 +80,10 @@ const ThonSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    dienTich: {
+      type: Number,
+      default: 0 // Diện tích của thôn tính theo km²
+    },
     tyLeHoToanXa: {
       type: String,
       trim: true,

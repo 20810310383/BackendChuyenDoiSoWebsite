@@ -1,5 +1,41 @@
 const Thon = require('../models/Thon');
 
+// Hàm tự động giải mã link Google Maps (kể cả link rút gọn maps.app.goo.gl) để lấy tọa độ Vĩ độ/Kinh độ chuẩn
+const resolveGoogleMapsUrl = async (linkUrl) => {
+  if (!linkUrl || typeof linkUrl !== 'string') return null;
+  const trimmed = linkUrl.trim();
+  if (!trimmed) return null;
+
+  // 1. Kiểm tra nếu link chứa tọa độ dạng @20.489123,105.915456
+  let match = trimmed.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (match) {
+    return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+  }
+
+  // 2. Link chứa tọa độ chuỗi dạng 20.489123, 105.915456
+  match = trimmed.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+  if (match) {
+    return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+  }
+
+  // 3. Nếu là link rút gọn maps.app.goo.gl hoặc goo.gl/maps thì fetch redirect để lấy URL đầy đủ
+  if (trimmed.includes('maps.app.goo.gl') || trimmed.includes('goo.gl/maps')) {
+    try {
+      const response = await fetch(trimmed, { method: 'GET', redirect: 'follow' });
+      const finalUrl = response.url;
+
+      match = finalUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || finalUrl.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (match) {
+        return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+      }
+    } catch (e) {
+      console.log('[Google Maps Resolver Warning]:', e.message);
+    }
+  }
+
+  return null;
+};
+
 // @desc    Lấy danh sách tất cả các Thôn
 // @route   GET /api/thon
 // @access  Public
@@ -9,6 +45,19 @@ exports.getAllThon = async (req, res) => {
     const filter = all === 'true' ? {} : { trangThai: true };
 
     const listThon = await Thon.find(filter).sort({ createdAt: 1 });
+
+    // Tự động kiểm tra và giải mã tọa độ cho các thôn đã cài đặt linkGoogleMaps từ trước
+    await Promise.all(
+      listThon.map(async (t) => {
+        if ((!t.toaDo || !t.toaDo.lat || !t.toaDo.lng) && (t.linkGoogleMaps || t.linkChiDuong)) {
+          const resolved = (await resolveGoogleMapsUrl(t.linkGoogleMaps)) || (await resolveGoogleMapsUrl(t.linkChiDuong));
+          if (resolved) {
+            t.toaDo = resolved;
+            await Thon.findByIdAndUpdate(t._id, { toaDo: resolved });
+          }
+        }
+      })
+    );
 
     res.status(200).json({
       success: true,
@@ -38,6 +87,14 @@ exports.getThonById = async (req, res) => {
       });
     }
 
+    if ((!thon.toaDo || !thon.toaDo.lat || !thon.toaDo.lng) && (thon.linkGoogleMaps || thon.linkChiDuong)) {
+      const resolved = (await resolveGoogleMapsUrl(thon.linkGoogleMaps)) || (await resolveGoogleMapsUrl(thon.linkChiDuong));
+      if (resolved) {
+        thon.toaDo = resolved;
+        await Thon.findByIdAndUpdate(thon._id, { toaDo: resolved });
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: thon
@@ -65,6 +122,7 @@ exports.createThon = async (req, res) => {
       diaChiNhaVanHoa,
       soHoDan,
       danSo,
+      dienTich,
       tyLeHoToanXa,
       khoangCachTrungTam,
       gioiThieu,
@@ -87,6 +145,12 @@ exports.createThon = async (req, res) => {
       hinhAnhPath = `/uploads/images/${req.file.filename}`;
     }
 
+    let finalToaDo = toaDo ? (typeof toaDo === 'string' ? JSON.parse(toaDo) : toaDo) : { lat: 0, lng: 0 };
+    if (!finalToaDo.lat || !finalToaDo.lng) {
+      const resolved = (await resolveGoogleMapsUrl(linkGoogleMaps)) || (await resolveGoogleMapsUrl(linkChiDuong));
+      if (resolved) finalToaDo = resolved;
+    }
+
     const thonMoi = await Thon.create({
       tenThon,
       hinhAnh: hinhAnhPath,
@@ -96,12 +160,13 @@ exports.createThon = async (req, res) => {
       diaChiNhaVanHoa: diaChiNhaVanHoa || '',
       soHoDan: soHoDan ? Number(soHoDan) : 0,
       danSo: danSo ? Number(danSo) : 0,
+      dienTich: dienTich ? Number(dienTich) : 0,
       tyLeHoToanXa: tyLeHoToanXa || '',
       khoangCachTrungTam: khoangCachTrungTam || '',
       gioiThieu: gioiThieu || '',
       linkGoogleMaps: linkGoogleMaps || '',
       linkChiDuong: linkChiDuong || '',
-      toaDo: toaDo ? (typeof toaDo === 'string' ? JSON.parse(toaDo) : toaDo) : { lat: 0, lng: 0 },
+      toaDo: finalToaDo,
       danhSachCanBo: danhSachCanBo ? (typeof danhSachCanBo === 'string' ? JSON.parse(danhSachCanBo) : danhSachCanBo) : [],
       trangThai: trangThai !== undefined ? (trangThai === 'true' || trangThai === true) : true
     });
@@ -143,6 +208,14 @@ exports.updateThon = async (req, res) => {
 
     if (req.file) {
       updateFields.hinhAnh = `/uploads/images/${req.file.filename}`;
+    }
+
+    const targetMapsLink = updateFields.linkGoogleMaps !== undefined ? updateFields.linkGoogleMaps : thon.linkGoogleMaps;
+    const targetChiDuongLink = updateFields.linkChiDuong !== undefined ? updateFields.linkChiDuong : thon.linkChiDuong;
+
+    const resolved = (await resolveGoogleMapsUrl(targetMapsLink)) || (await resolveGoogleMapsUrl(targetChiDuongLink));
+    if (resolved) {
+      updateFields.toaDo = resolved;
     }
 
     thon = await Thon.findByIdAndUpdate(req.params.id, updateFields, {
