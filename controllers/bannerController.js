@@ -78,7 +78,7 @@ exports.createBanner = async (req, res, next) => {
     }
 
     const newBanner = await Banner.create({
-      tieuDe,
+      tieuDe: tieuDe || '',
       moTa: moTa || '',
       hinhAnh: hinhAnhUrl,
       duongDan: duongDan || '',

@@ -4,7 +4,7 @@ const BannerSchema = new mongoose.Schema(
   {
     tieuDe: {
       type: String,
-      required: [true, 'Vui lòng nhập tiêu đề banner'],
+      default: '',
       trim: true
     },
     moTa: {
