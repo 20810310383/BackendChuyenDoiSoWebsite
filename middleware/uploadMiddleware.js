@@ -16,16 +16,15 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, 'avatar-' + uniqueSuffix + ext);
+    cb(null, 'upload-' + uniqueSuffix + ext);
   }
 });
 
-// File Filter - Only images
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype) || file.mimetype.startsWith('image/');
-
+// Image-only filter (ảnh đại diện, banner, avatar, logo...)
+const imageFilter = (req, file, cb) => {
+  const allowedExt = /jpeg|jpg|png|gif|webp|svg/;
+  const extname = allowedExt.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = file.mimetype.startsWith('image/');
   if (mimetype && extname) {
     return cb(null, true);
   } else {
@@ -33,10 +32,31 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Media filter — ảnh + video + audio (dùng cho trình soạn thảo TinyMCE)
+const mediaFilter = (req, file, cb) => {
+  const isImage = file.mimetype.startsWith('image/');
+  const isVideo = file.mimetype.startsWith('video/');
+  const isAudio = file.mimetype.startsWith('audio/');
+  if (isImage || isVideo || isAudio) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Chỉ cho phép tải lên file hình ảnh, video hoặc audio!'));
+  }
+};
+
+// Upload mặc định (chỉ ảnh)
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit cho ảnh lớn
-  fileFilter: fileFilter
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  fileFilter: imageFilter
+});
+
+// Upload media cho TinyMCE editor (ảnh + video + audio)
+const uploadMedia = multer({
+  storage: storage,
+  limits: { fileSize: 200 * 1024 * 1024 }, // 200MB
+  fileFilter: mediaFilter
 });
 
 module.exports = upload;
+module.exports.uploadMedia = uploadMedia;

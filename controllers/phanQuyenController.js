@@ -11,7 +11,9 @@ const defaultPermissions = [
       banners: { xem: true, them: true, sua: true, xoa: true },
       phanQuyen: { xem: true },
       caiDatHeThong: { xem: true, sua: true },
-      gioiThieu: { xem: true, sua: true }
+      gioiThieu: { xem: true, sua: true },
+      gioiThieuDoan: { xem: true, sua: true },
+      baiViet: { xem: true, them: true, sua: true, xoa: true }
     }
   },
   {
@@ -24,7 +26,9 @@ const defaultPermissions = [
       banners: { xem: true, them: true, sua: true, xoa: false },
       phanQuyen: { xem: false },
       caiDatHeThong: { xem: true, sua: true },
-      gioiThieu: { xem: true, sua: true }
+      gioiThieu: { xem: true, sua: true },
+      gioiThieuDoan: { xem: true, sua: true },
+      baiViet: { xem: true, them: true, sua: true, xoa: false }
     }
   },
   {
@@ -37,7 +41,9 @@ const defaultPermissions = [
       banners: { xem: true, them: false, sua: false, xoa: false },
       phanQuyen: { xem: false },
       caiDatHeThong: { xem: true, sua: false },
-      gioiThieu: { xem: true, sua: false }
+      gioiThieu: { xem: true, sua: false },
+      gioiThieuDoan: { xem: true, sua: false },
+      baiViet: { xem: true, them: false, sua: false, xoa: false }
     }
   }
 ];

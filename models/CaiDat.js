@@ -26,6 +26,14 @@ const caiDatSchema = new mongoose.Schema(
       type: String,
       default: 'thôn trên địa bàn xã'
     },
+    tieuDeKhuVucBaiViet: {
+      type: String,
+      default: 'Tin Tức & Hoạt Động Nổi Bật'
+    },
+    moTaKhuVucBaiViet: {
+      type: String,
+      default: 'Cập nhật những thông tin, chỉ đạo và hoạt động chuyển đổi số mới nhất của Đoàn xã Tân Thanh'
+    },
     logoUrl: {
       type: String,
       default: '/images/logo.png'

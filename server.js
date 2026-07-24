@@ -36,6 +36,8 @@ const bannerRoutes = require('./routes/bannerRoutes');
 const phanQuyenRoutes = require('./routes/phanQuyenRoutes');
 const caiDatRoutes = require('./routes/caiDatRoutes');
 const gioiThieuRoutes = require('./routes/gioiThieuRoutes');
+const gioiThieuDoanRoutes = require('./routes/gioiThieuDoanRoutes');
+const baiVietChiaSeRoutes = require('./routes/baiVietChiaSeRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tru-so-hanh-chinh', truSoHanhChinhRoutes);
@@ -45,6 +47,8 @@ app.use('/api/banners', bannerRoutes);
 app.use('/api/phan-quyen', phanQuyenRoutes);
 app.use('/api/cai-dat', caiDatRoutes);
 app.use('/api/gioi-thieu', gioiThieuRoutes);
+app.use('/api/gioi-thieu-doan', gioiThieuDoanRoutes);
+app.use('/api/bai-viet', baiVietChiaSeRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

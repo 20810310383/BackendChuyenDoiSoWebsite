@@ -14,6 +14,8 @@ exports.getCaiDat = async (req, res, next) => {
       if (caiDat.heroDesc === undefined) { caiDat.heroDesc = 'Tra cứu thông tin nhanh chóng và chính xác.'; isUpdated = true; }
       if (caiDat.tieuDeKhuvucThon === undefined) { caiDat.tieuDeKhuvucThon = 'Tra cứu thông tin Thôn'; isUpdated = true; }
       if (caiDat.moTaKhuvucThon === undefined) { caiDat.moTaKhuvucThon = 'thôn trên địa bàn xã'; isUpdated = true; }
+      if (caiDat.tieuDeKhuVucBaiViet === undefined) { caiDat.tieuDeKhuVucBaiViet = 'Tin Tức & Hoạt Động Nổi Bật'; isUpdated = true; }
+      if (caiDat.moTaKhuVucBaiViet === undefined) { caiDat.moTaKhuVucBaiViet = 'Cập nhật những thông tin, chỉ đạo và hoạt động chuyển đổi số mới nhất của Đoàn xã Tân Thanh'; isUpdated = true; }
       if (isUpdated) {
         await caiDat.save();
       }
