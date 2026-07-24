@@ -16,6 +16,14 @@ const TruSoHanhChinhSchema = new mongoose.Schema(
       type: String,
       default: '' // Đường dẫn hình ảnh trụ sở
     },
+    hinhAnhCo1: {
+      type: String,
+      default: '' // Đường dẫn hình ảnh Cờ 1 (vd: Cờ Đảng)
+    },
+    hinhAnhCo2: {
+      type: String,
+      default: '' // Đường dẫn hình ảnh Cờ 2 (vd: Cờ Tổ Quốc)
+    },
     icon: {
       type: String,
       default: ''

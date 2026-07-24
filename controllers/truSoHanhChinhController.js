@@ -66,6 +66,8 @@ exports.createTruSo = async (req, res) => {
       toaDo,
       trangThai,
       hinhAnh,
+      hinhAnhCo1,
+      hinhAnhCo2,
       icon
     } = req.body;
 
@@ -77,7 +79,20 @@ exports.createTruSo = async (req, res) => {
     }
 
     let hinhAnhPath = hinhAnh || '';
-    if (req.file) {
+    let hinhAnhCo1Path = hinhAnhCo1 || '';
+    let hinhAnhCo2Path = hinhAnhCo2 || '';
+
+    if (req.files) {
+      if (req.files.hinhAnh && req.files.hinhAnh[0]) {
+        hinhAnhPath = `/uploads/images/${req.files.hinhAnh[0].filename}`;
+      }
+      if (req.files.hinhAnhCo1 && req.files.hinhAnhCo1[0]) {
+        hinhAnhCo1Path = `/uploads/images/${req.files.hinhAnhCo1[0].filename}`;
+      }
+      if (req.files.hinhAnhCo2 && req.files.hinhAnhCo2[0]) {
+        hinhAnhCo2Path = `/uploads/images/${req.files.hinhAnhCo2[0].filename}`;
+      }
+    } else if (req.file) {
       hinhAnhPath = `/uploads/images/${req.file.filename}`;
     }
 
@@ -85,6 +100,8 @@ exports.createTruSo = async (req, res) => {
       tenTruSo,
       moTa: moTa || '',
       hinhAnh: hinhAnhPath,
+      hinhAnhCo1: hinhAnhCo1Path,
+      hinhAnhCo2: hinhAnhCo2Path,
       linkGoogleMaps: linkGoogleMaps || '',
       linkChiDuong: linkChiDuong || '',
       diaChi: diaChi || '',
@@ -133,7 +150,17 @@ exports.updateTruSo = async (req, res) => {
       updateFields.toaDo = JSON.parse(updateFields.toaDo);
     }
 
-    if (req.file) {
+    if (req.files) {
+      if (req.files.hinhAnh && req.files.hinhAnh[0]) {
+        updateFields.hinhAnh = `/uploads/images/${req.files.hinhAnh[0].filename}`;
+      }
+      if (req.files.hinhAnhCo1 && req.files.hinhAnhCo1[0]) {
+        updateFields.hinhAnhCo1 = `/uploads/images/${req.files.hinhAnhCo1[0].filename}`;
+      }
+      if (req.files.hinhAnhCo2 && req.files.hinhAnhCo2[0]) {
+        updateFields.hinhAnhCo2 = `/uploads/images/${req.files.hinhAnhCo2[0].filename}`;
+      }
+    } else if (req.file) {
       updateFields.hinhAnh = `/uploads/images/${req.file.filename}`;
     }
 
