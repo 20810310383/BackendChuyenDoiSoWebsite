@@ -10,6 +10,22 @@ const caiDatSchema = new mongoose.Schema(
       type: String,
       default: 'Xã Thanh Liêm, tỉnh Ninh Bình'
     },
+    heroSub: {
+      type: String,
+      default: 'Xã Thanh Liêm, tỉnh Ninh Bình'
+    },
+    heroDesc: {
+      type: String,
+      default: 'Tra cứu thông tin nhanh chóng và chính xác.'
+    },
+    tieuDeKhuvucThon: {
+      type: String,
+      default: 'Tra cứu thông tin Thôn'
+    },
+    moTaKhuvucThon: {
+      type: String,
+      default: 'thôn trên địa bàn xã'
+    },
     logoUrl: {
       type: String,
       default: '/images/logo.png'
