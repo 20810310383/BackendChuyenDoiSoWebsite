@@ -72,13 +72,11 @@ exports.uploadMedia = async (req, res, next) => {
     }
 
     const fileUrl = `/uploads/images/${req.file.filename}`;
-    const baseUrl = process.env.SERVER_URL || 'http://localhost:5000';
-    const fullUrl = `${baseUrl}${fileUrl}`;
 
-    // Đáp ứng định dạng TinyMCE images_upload_handler
+    // Đáp ứng định dạng TinyMCE images_upload_handler (Đường dẫn tương đối)
     return res.json({
-      location: fullUrl,
-      url: fullUrl,
+      location: fileUrl,
+      url: fileUrl,
       success: true
     });
   } catch (error) {
