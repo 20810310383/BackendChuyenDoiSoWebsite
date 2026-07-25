@@ -1,5 +1,41 @@
 const mongoose = require('mongoose');
 
+const ThanhVienDoanSchema = new mongoose.Schema(
+  {
+    hoTen: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    chucVu: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    avatar: {
+      type: String,
+      default: ''
+    },
+    soDienThoai: {
+      type: String,
+      default: ''
+    },
+    email: {
+      type: String,
+      default: ''
+    },
+    ghiChu: {
+      type: String,
+      default: ''
+    },
+    thuTu: {
+      type: Number,
+      default: 0
+    }
+  },
+  { timestamps: true }
+);
+
 const gioiThieuDoanSchema = new mongoose.Schema(
   {
     tieuDe: {
@@ -13,15 +49,33 @@ const gioiThieuDoanSchema = new mongoose.Schema(
     },
     tomTat: {
       type: String,
-      default: 'Thông tin giới thiệu về cơ cấu tổ chức, Ban Chấp hành, Ban Thường vụ Đoàn TNCS Hồ Chí Minh xã, nhiệm vụ và định hướng hoạt động phong trào thanh thiếu nhi.'
+      default: 'Thông tin cơ cấu tổ chức, danh sách Ban Thường vụ và Ban Chấp hành Đoàn TNCS Hồ Chí Minh xã.'
     },
     hinhAnhDaiDien: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop'
+      default: ''
     },
+    tieuDeBTV: {
+      type: String,
+      default: 'DANH SÁCH BAN THƯỜNG VỤ ĐOÀN XÃ'
+    },
+    moTaBTV: {
+      type: String,
+      default: 'Tập thể chỉ đạo, điều hành toàn diện công tác Đoàn và phong trào thanh thiếu nhi địa phương'
+    },
+    tieuDeBCH: {
+      type: String,
+      default: 'DANH SÁCH BAN CHẤP HÀNH ĐOÀN XÃ'
+    },
+    moTaBCH: {
+      type: String,
+      default: 'Các đồng chí Ủy viên Ban Chấp hành đại diện cho các Chi đoàn thôn và bộ phận trực thuộc'
+    },
+    danhSachBTV: [ThanhVienDoanSchema],
+    danhSachBCH: [ThanhVienDoanSchema],
     noiDung: {
       type: String,
-      default: `<h2>Giới thiệu Ban Chấp hành, Ban Thường vụ Đoàn xã</h2><p>Đoàn TNCS Hồ Chí Minh xã là tổ chức chính trị - xã hội của thanh niên, cánh tay đắc lực của Đảng bộ xã, luôn xung kích đi đầu trong mọi hoạt động phong trào, phát triển kinh tế - xã hội và chuyển đổi số tại địa phương.</p><h2>Cơ cấu tổ chức Ban Chấp hành</h2><p>Ban Chấp hành Đoàn xã gồm các đồng chí Bí thư, Phó Bí thư và các Ủy viên BTV, Ủy viên BCH đại diện cho các chi đoàn thôn/xóm và các chi đoàn trực thuộc.</p><h2>Nhiệm vụ trọng tâm</h2><p>Tuyên truyền giáo dục lý tưởng cách mạng, đồng hành với thanh niên trong học tập, khởi nghiệp, lập nghiệp và phát động các phong trào tình nguyện chuyển đổi số cộng đồng.</p>`
+      default: ''
     },
     luotXem: {
       type: Number,
