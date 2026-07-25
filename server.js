@@ -37,6 +37,7 @@ const phanQuyenRoutes = require('./routes/phanQuyenRoutes');
 const caiDatRoutes = require('./routes/caiDatRoutes');
 const gioiThieuRoutes = require('./routes/gioiThieuRoutes');
 const gioiThieuDoanRoutes = require('./routes/gioiThieuDoanRoutes');
+const gioiThieuLanhDaoRoutes = require('./routes/gioiThieuLanhDaoRoutes');
 const baiVietChiaSeRoutes = require('./routes/baiVietChiaSeRoutes');
 
 app.use('/api/auth', authRoutes);
@@ -48,6 +49,7 @@ app.use('/api/phan-quyen', phanQuyenRoutes);
 app.use('/api/cai-dat', caiDatRoutes);
 app.use('/api/gioi-thieu', gioiThieuRoutes);
 app.use('/api/gioi-thieu-doan', gioiThieuDoanRoutes);
+app.use('/api/gioi-thieu-lanh-dao', gioiThieuLanhDaoRoutes);
 app.use('/api/bai-viet', baiVietChiaSeRoutes);
 
 // Root Route
