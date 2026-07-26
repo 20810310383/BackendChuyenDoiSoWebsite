@@ -1,4 +1,5 @@
 const TruSoHanhChinh = require('../models/TruSoHanhChinh');
+const mongoose = require('mongoose');
 
 // @desc    Lấy danh sách tất cả các Trụ sở hành chính
 // @route   GET /api/tru-so-hanh-chinh
@@ -29,7 +30,41 @@ exports.getAllTruSo = async (req, res) => {
 // @access  Public
 exports.getTruSoById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy thông tin Trụ sở hành chính này!'
+      });
+    }
+
     const truSo = await TruSoHanhChinh.findById(req.params.id);
+
+    if (!truSo) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy thông tin Trụ sở hành chính này!'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: truSo
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi khi lấy chi tiết Trụ sở hành chính!',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Lấy chi tiết 1 Trụ sở hành chính theo Slug (SEO-friendly)
+// @route   GET /api/tru-so-hanh-chinh/slug/:slug
+// @access  Public
+exports.getTruSoBySlug = async (req, res) => {
+  try {
+    const truSo = await TruSoHanhChinh.findOne({ slug: req.params.slug });
 
     if (!truSo) {
       return res.status(404).json({
@@ -59,6 +94,7 @@ exports.createTruSo = async (req, res) => {
     const {
       tenTruSo,
       moTa,
+      moTaChiTiet,
       linkGoogleMaps,
       linkChiDuong,
       diaChi,
@@ -96,9 +132,11 @@ exports.createTruSo = async (req, res) => {
       hinhAnhPath = `/uploads/images/${req.file.filename}`;
     }
 
-    const truSoMoi = await TruSoHanhChinh.create({
+    // Sử dụng new + save() để pre-save hook tự sinh slug
+    const truSoMoi = new TruSoHanhChinh({
       tenTruSo,
       moTa: moTa || '',
+      moTaChiTiet: moTaChiTiet || '',
       hinhAnh: hinhAnhPath,
       hinhAnhCo1: hinhAnhCo1Path,
       hinhAnhCo2: hinhAnhCo2Path,
@@ -110,6 +148,7 @@ exports.createTruSo = async (req, res) => {
       trangThai: trangThai !== undefined ? (trangThai === 'true' || trangThai === true) : true,
       icon: icon || ''
     });
+    await truSoMoi.save();
 
     res.status(201).json({
       success: true,
@@ -140,34 +179,38 @@ exports.updateTruSo = async (req, res) => {
       });
     }
 
-    const updateFields = { ...req.body };
+    // Cập nhật các trường từ body
+    const fieldsToUpdate = ['tenTruSo', 'moTa', 'moTaChiTiet', 'linkGoogleMaps', 'linkChiDuong', 'diaChi', 'soDienThoai', 'icon'];
+    fieldsToUpdate.forEach(field => {
+      if (req.body[field] !== undefined) {
+        truSo[field] = req.body[field];
+      }
+    });
 
-    if (updateFields.trangThai !== undefined) {
-      updateFields.trangThai = updateFields.trangThai === 'true' || updateFields.trangThai === true;
+    if (req.body.trangThai !== undefined) {
+      truSo.trangThai = req.body.trangThai === 'true' || req.body.trangThai === true;
     }
 
-    if (updateFields.toaDo && typeof updateFields.toaDo === 'string') {
-      updateFields.toaDo = JSON.parse(updateFields.toaDo);
+    if (req.body.toaDo) {
+      truSo.toaDo = typeof req.body.toaDo === 'string' ? JSON.parse(req.body.toaDo) : req.body.toaDo;
     }
 
     if (req.files) {
       if (req.files.hinhAnh && req.files.hinhAnh[0]) {
-        updateFields.hinhAnh = `/uploads/images/${req.files.hinhAnh[0].filename}`;
+        truSo.hinhAnh = `/uploads/images/${req.files.hinhAnh[0].filename}`;
       }
       if (req.files.hinhAnhCo1 && req.files.hinhAnhCo1[0]) {
-        updateFields.hinhAnhCo1 = `/uploads/images/${req.files.hinhAnhCo1[0].filename}`;
+        truSo.hinhAnhCo1 = `/uploads/images/${req.files.hinhAnhCo1[0].filename}`;
       }
       if (req.files.hinhAnhCo2 && req.files.hinhAnhCo2[0]) {
-        updateFields.hinhAnhCo2 = `/uploads/images/${req.files.hinhAnhCo2[0].filename}`;
+        truSo.hinhAnhCo2 = `/uploads/images/${req.files.hinhAnhCo2[0].filename}`;
       }
     } else if (req.file) {
-      updateFields.hinhAnh = `/uploads/images/${req.file.filename}`;
+      truSo.hinhAnh = `/uploads/images/${req.file.filename}`;
     }
 
-    truSo = await TruSoHanhChinh.findByIdAndUpdate(req.params.id, updateFields, {
-      new: true,
-      runValidators: true
-    });
+    // Dùng save() để pre-save hook cập nhật slug khi đổi tên
+    await truSo.save();
 
     res.status(200).json({
       success: true,
@@ -207,6 +250,35 @@ exports.deleteTruSo = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Lỗi khi xóa Trụ sở hành chính!',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Upload media (ảnh/video) cho TinyMCE Editor trong Trụ sở
+// @route   POST /api/tru-so-hanh-chinh/upload-media
+// @access  Private (Admin / NhanVien)
+exports.uploadMediaTruSo = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Chưa có tập tin nào được chọn!'
+      });
+    }
+
+    const relativeUrl = `/uploads/images/${req.file.filename}`;
+
+    return res.status(200).json({
+      success: true,
+      location: relativeUrl,
+      url: relativeUrl
+    });
+  } catch (error) {
+    console.error('Lỗi upload media trụ sở:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi tải tập tin phương tiện!',
       error: error.message
     });
   }
