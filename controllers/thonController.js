@@ -551,3 +551,28 @@ exports.seedSampleData = async (req, res) => {
     });
   }
 };
+
+// @desc    Upload Ảnh / Video từ Editor TinyMCE cho Thôn
+// @route   POST /api/thon/upload-media
+// @access  Private (Admin, NhanVien)
+exports.uploadMediaThon = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng chọn tập tin ảnh để tải lên!'
+      });
+    }
+
+    const fileUrl = `/uploads/images/${req.file.filename}`;
+
+    return res.json({
+      location: fileUrl,
+      url: fileUrl,
+      success: true
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

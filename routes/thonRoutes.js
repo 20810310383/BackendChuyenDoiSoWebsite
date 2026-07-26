@@ -9,7 +9,8 @@ const {
   addCanBo,
   updateCanBo,
   deleteCanBo,
-  seedSampleData
+  seedSampleData,
+  uploadMediaThon
 } = require('../controllers/thonController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
@@ -20,6 +21,7 @@ router.get('/:id', getThonById);
 router.post('/seed', seedSampleData);
 
 // Protected Thôn routes
+router.post('/upload-media', protect, authorize('admin', 'nhanvien'), upload.single('file'), uploadMediaThon);
 router.post('/', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), createThon);
 router.put('/:id', protect, authorize('admin', 'nhanvien'), upload.single('hinhAnh'), updateThon);
 router.delete('/:id', protect, authorize('admin'), deleteThon);
