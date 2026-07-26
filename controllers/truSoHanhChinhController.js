@@ -132,11 +132,21 @@ exports.createTruSo = async (req, res) => {
       hinhAnhPath = `/uploads/images/${req.file.filename}`;
     }
 
+    let danhSachCanBoParsed = [];
+    if (req.body.danhSachCanBo) {
+      try {
+        danhSachCanBoParsed = typeof req.body.danhSachCanBo === 'string' ? JSON.parse(req.body.danhSachCanBo) : req.body.danhSachCanBo;
+      } catch (e) {
+        console.error('Error parsing danhSachCanBo:', e);
+      }
+    }
+
     // Sử dụng new + save() để pre-save hook tự sinh slug
     const truSoMoi = new TruSoHanhChinh({
       tenTruSo,
       moTa: moTa || '',
       moTaChiTiet: moTaChiTiet || '',
+      danhSachCanBo: danhSachCanBoParsed,
       hinhAnh: hinhAnhPath,
       hinhAnhCo1: hinhAnhCo1Path,
       hinhAnhCo2: hinhAnhCo2Path,
@@ -186,6 +196,14 @@ exports.updateTruSo = async (req, res) => {
         truSo[field] = req.body[field];
       }
     });
+
+    if (req.body.danhSachCanBo !== undefined) {
+      try {
+        truSo.danhSachCanBo = typeof req.body.danhSachCanBo === 'string' ? JSON.parse(req.body.danhSachCanBo) : req.body.danhSachCanBo;
+      } catch (e) {
+        console.error('Error parsing danhSachCanBo in update:', e);
+      }
+    }
 
     if (req.body.trangThai !== undefined) {
       truSo.trangThai = req.body.trangThai === 'true' || req.body.trangThai === true;

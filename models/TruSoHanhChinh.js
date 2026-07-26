@@ -1,5 +1,42 @@
 const mongoose = require('mongoose');
 
+// Schema Cán bộ / Nhân sự thuộc Trụ sở
+const CanBoTruSoSchema = new mongoose.Schema(
+  {
+    hoTen: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    chucVu: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    avatar: {
+      type: String,
+      default: ''
+    },
+    soDienThoai: {
+      type: String,
+      default: ''
+    },
+    email: {
+      type: String,
+      default: ''
+    },
+    ghiChu: {
+      type: String,
+      default: ''
+    },
+    thuTu: {
+      type: Number,
+      default: 0
+    }
+  },
+  { timestamps: true }
+);
+
 // Hàm tạo slug SEO-friendly từ tiếng Việt
 const generateSlug = (str) => {
   if (!str) return '';
@@ -41,6 +78,7 @@ const TruSoHanhChinhSchema = new mongoose.Schema(
       type: String,
       default: '' // Nội dung chi tiết phong phú (HTML TinyMCE)
     },
+    danhSachCanBo: [CanBoTruSoSchema], // Danh sách cán bộ / nhân sự phụ trách trụ sở
     hinhAnh: {
       type: String,
       default: '' // Đường dẫn hình ảnh trụ sở
