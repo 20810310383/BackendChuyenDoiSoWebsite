@@ -10,7 +10,7 @@ exports.getCaiDat = async (req, res, next) => {
       caiDat = await CaiDat.create({});
     } else {
       let isUpdated = false;
-      if (caiDat.heroSub === undefined) { caiDat.heroSub = caiDat.tenDonVi || 'Xã Thanh Liêm, tỉnh Ninh Bình'; isUpdated = true; }
+      if (caiDat.heroSub === undefined) { caiDat.heroSub = caiDat.tenDonVi || ''; isUpdated = true; }
       if (caiDat.heroDesc === undefined) { caiDat.heroDesc = 'Tra cứu thông tin nhanh chóng và chính xác.'; isUpdated = true; }
       if (caiDat.tieuDeKhuvucThon === undefined) { caiDat.tieuDeKhuvucThon = 'Tra cứu thông tin Thôn'; isUpdated = true; }
       if (caiDat.moTaKhuvucThon === undefined) { caiDat.moTaKhuvucThon = 'thôn trên địa bàn xã'; isUpdated = true; }

@@ -8,11 +8,11 @@ const caiDatSchema = new mongoose.Schema(
     },
     tenDonVi: {
       type: String,
-      default: 'Xã Thanh Liêm, tỉnh Ninh Bình'
+      default: ''
     },
     heroSub: {
       type: String,
-      default: 'Xã Thanh Liêm, tỉnh Ninh Bình'
+      default: ''
     },
     heroDesc: {
       type: String,
@@ -60,7 +60,7 @@ const caiDatSchema = new mongoose.Schema(
     },
     diachi: {
       type: String,
-      default: 'Xã Thanh Liêm, tỉnh Ninh Bình'
+      default: ''
     },
     slogan: {
       type: String,
