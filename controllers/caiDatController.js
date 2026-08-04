@@ -17,6 +17,7 @@ exports.getCaiDat = async (req, res, next) => {
       if (caiDat.tieuDeKhuVucBaiViet === undefined) { caiDat.tieuDeKhuVucBaiViet = 'Tin Tức & Hoạt Động Nổi Bật'; isUpdated = true; }
       if (caiDat.moTaKhuVucBaiViet === undefined) { caiDat.moTaKhuVucBaiViet = 'Cập nhật những thông tin, chỉ đạo và hoạt động chuyển đổi số mới nhất của Đoàn xã Tân Thanh'; isUpdated = true; }
       if (caiDat.dienTichTuNhien === undefined) { caiDat.dienTichTuNhien = '23,27 km²'; isUpdated = true; }
+      if (caiDat.soChiDoanTrucThuoc === undefined) { caiDat.soChiDoanTrucThuoc = 10; isUpdated = true; }
       if (isUpdated) {
         await caiDat.save();
       }

@@ -38,6 +38,10 @@ const caiDatSchema = new mongoose.Schema(
       type: String,
       default: '23,27 km²'
     },
+    soChiDoanTrucThuoc: {
+      type: Number,
+      default: 10
+    },
     logoUrl: {
       type: String,
       default: '/images/logo.png'
